@@ -19,20 +19,20 @@ router.get('/test', (req, res) => {
 })
 
 //get gateway
-router.get('/*', (req, res) => {
+router.get('/*', async (req, res) => {
 
     let startPath = req.path.split('/', 2)[1];
     let url = require('./config/urlConfig')[startPath].url;
     if (!url) return res.json({'code':'E001', 'msg':'유효하지 않은 요청입니다.'});
     url = `${url}${req.path}`;
     console.log(url);
-
-    axios.get(url).then(x => {
-        console.log(x.data);
-    })
-
-
-    res.json({'code':'S001', 'url':url});
+    let response = await axios.get(url, {
+        params: {
+            id: 'test'
+            ,pw: '1234'
+        }
+    });
+    res.json({'code': response.data.code, 'message':response.data.message, 'data':response.data.data});
 })
 
 //포트 연결
